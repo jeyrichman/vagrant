@@ -1,0 +1,20 @@
+---
+- name: Build Docker images from Dockerfiles.
+  docker_image:
+    name: "{{ item.name }}"
+    tag: "{{ item.tag }}"
+    path: "/vagrant/provisioning/tasks/{{ item.directory }}"
+    state: build
+  with_items:
+ #   - { name: apache, tag: "apache", directory: apache }
+     - { name: db, tag: mysql, directory: db }
+ #   - { name: consul, tag: consul, directory: consul }
+
+- name: Run a MySQL container.
+  docker:
+    image: db:mysql
+    name: db
+    state: running
+    volumes_from: data
+    command: /opt/start-mysql.sh
+    ports: "3306:3306"
