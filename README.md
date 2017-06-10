@@ -7,7 +7,7 @@ Just a simple test app based on:
 - Apache
 - Consul
 
-Clone repository and type:
+Clone repository and type in console:
 vagrant up
 
 Go to your browser and type:
