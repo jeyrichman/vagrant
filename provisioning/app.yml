@@ -1,0 +1,14 @@
+- name: Build Ghost image
+  docker_image:
+   name: denmanjd/ghost
+   state: build
+
+- name: Pull and run Ghost Docker container
+  docker:
+   name: ghost-{{ ansible_hostname }}
+   image: denmanjd/ghost
+   restart_policy: always
+   volumes:
+   - "/vagrant/provisioning/tasks/app-nginx/www/config.js:/var/www/ghost/config.js"
+   ports:
+   - 2368:2368

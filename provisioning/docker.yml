@@ -1,4 +1,30 @@
 ---
+- name: Pull and run Consul
+  docker:
+    name: consul
+    image: progrium/consul
+    restart_policy: always
+    state: started
+    command: -server -bootstrap -ui-dir /ui
+    ports:
+     - 8500:8500
+     - 8400:8400
+     - 8600:53/udp
+
+
+
+#- name: Store mysql credentials into consul
+#  consul_kv:
+#    key: mysql/{{ item.key }}
+#    value: "{{ item.value }}"
+#    state: present
+#  when: item.value is defined
+#  with_items:
+#    - { key: mysql_host, value: "db" }
+#    - { key: mysql_user, value: "admin" }
+#    - { key: mysql_db, value: "admin" }
+#    - { key: mysql_pass, value: "admin" }
+
 - name: Build Docker images from Dockerfiles
   docker_image:
     name: "{{ item.name }}"
@@ -8,22 +34,37 @@
   with_items:
      - { name: app, tag: "apache", directory: app }
      - { name: db, tag: mysql, directory: db }
- #   - { name: consul, tag: consul, directory: consul }
-
 
 - name: Run a MySQL container
   docker:
     image: db:mysql
     name: db
-    state: running
+    state: started
+    restart_policy: always
     ports: "3306:3306"
+
+- name: Store mysql credentials into consul
+  command: "{{ item }}"
+  with_items:
+
+      - curl -XPUT -d "db" http://localhost:8500/v1/kv/mysql/mysql_host 
+      - curl -XPUT -d "admin" http://localhost:8500/v1/kv/mysql/mysql_user
+      - curl -XPUT -d "admin" http://localhost:8500/v1/kv/mysql/mysql_db 
+      - curl -XPUT -d "admin" http://localhost:8500/v1/kv/mysql/mysql_pass
 
 - name: Run App container
   docker:
     image: app:apache
     name: app
-    state: running
+    state: started
+    restart_policy: always
     ports: "80:80"
-    links: db
+    links: 
+     - db
+     - consul
+
+
+- name: Apply DB credentials for app
+  command: "docker exec app /bin/bash /root/get-dbcred.sh"
 
 

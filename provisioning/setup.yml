@@ -1,14 +1,18 @@
-- name: Add vagrant user to docker group.
+- name: Add vagrant user to docker group
   user:
     name: vagrant
     groups: docker
     append: yes
   become: yes
 
-- name: Install Pip.
+- name: Install Pip
   apt: name=python-pip state=installed
   become: yes
 
-- name: Install Docker Python library.
+- name: Install python-consul
+  pip: name=python-consul state=present
+  become: yes
+
+- name: Install Docker Python library
   pip: name=docker-py state=present
   become: yes
