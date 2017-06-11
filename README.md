@@ -8,7 +8,7 @@ Just a simple test app based on:
 - Consul
 
 Clone repository and type in console:
-vagrant up
+sudo vagrant up
 
 Go to your browser and type:
 http://127.0.0.1:8080/
