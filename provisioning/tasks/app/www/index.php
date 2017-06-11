@@ -1,8 +1,8 @@
 <?php
-$server   = "db";
-$database = "admin";
-$username = "admin";
-$password = "admin";
+$server   = "MYSQL_HOST";
+$database = "MYSQL_DATABASE";
+$username = "MYSQL_USER";
+$password = "MYSQL_PASSWORD";
 
 $mysqlConnection = mysql_connect($server, $username, $password);
 if (!$mysqlConnection)
